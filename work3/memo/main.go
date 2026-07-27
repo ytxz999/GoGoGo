@@ -11,5 +11,8 @@ func main() {
 
 	r := router.SetupRouter()
 
-	r.Run(":8080")
+	err := r.Run(":8080")
+	if err != nil {
+		return
+	}
 }
