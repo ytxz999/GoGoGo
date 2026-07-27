@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"memo/common"
 	"memo/service"
 	"strconv"
 
@@ -18,33 +19,24 @@ type CreateTodoRequest struct {
 func CreateTodo(c *gin.Context) {
 	var req CreateTodoRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(400, gin.H{
-			"msg": "参数错误",
-		})
+		common.BadReqFail(c, "参数错误")
 		return
 	}
 
 	value, exist := c.Get("userId")
 	if !exist {
-		c.JSON(401, gin.H{
-			"msg": "用户不存在",
-		})
+		common.UnauFail(c, "用户不存在")
 	}
 	userId := value.(uint)
 
 	err := service.CreateTodo(req.Title, req.Content, req.StartTime, req.EndTime, userId)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"msg": "todo创建失败",
-			"err": err.Error(),
-		})
+		common.InternalFail(c, "创建todo失败")
 		return
 	}
 
 	// 返回注册结果
-	c.JSON(200, gin.H{
-		"msg": "创建成功",
-	})
+	common.Success(c, "创建成功")
 }
 
 type QueryTodoRequest struct {
@@ -58,9 +50,7 @@ type QueryTodoRequest struct {
 func GetTodoList(c *gin.Context) {
 	value, exist := c.Get("userId")
 	if !exist {
-		c.JSON(401, gin.H{
-			"msg": "用户不存在",
-		})
+		common.UnauFail(c, "用户不存在")
 		return
 	}
 	var req QueryTodoRequest
@@ -76,12 +66,10 @@ func GetTodoList(c *gin.Context) {
 	userId := value.(uint)
 	todoList, total, err := service.GetTodoList(req.Page, req.Size, req.Status, req.Keyword, userId)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"msg": "获取todo列表失败",
-		})
+		common.InternalFail(c, "获取todo失败")
 		return
 	}
-	c.JSON(200, gin.H{
+	common.Success(c, gin.H{
 		"data":   todoList,
 		"total":  total,
 		"page":   req.Page,
@@ -100,27 +88,19 @@ type UpdateTodoRequest struct {
 func UpdateTodo(c *gin.Context) {
 	value, exist := c.Get("userId")
 	if !exist {
-		c.JSON(401, gin.H{
-			"msg": "用户不存在",
-		})
+		common.UnauFail(c, "用户不存在")
 	}
 	userId := value.(uint)
 	var req UpdateTodoRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(400, gin.H{
-			"msg": "参数错误",
-		})
+		common.BadReqFail(c, "参数错误")
 	}
 	err := service.UpdateTodo(req.Id, req.Status, userId)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"msg": "更新todo失败",
-		})
+		common.InternalFail(c, "更新todo失败")
 		return
 	}
-	c.JSON(200, gin.H{
-		"msg": "更新成功",
-	})
+	common.Success(c, "更新成功")
 
 }
 
@@ -135,26 +115,17 @@ type DeleteTodoRequest struct {
 func DeleteTodo(c *gin.Context) {
 	value, exist := c.Get("userId")
 	if !exist {
-		c.JSON(401, gin.H{
-			"msg": "用户不存在",
-		})
+		common.UnauFail(c, "用户不存在")
 	}
 	userId := value.(uint)
 	var req DeleteTodoRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(400, gin.H{
-			"msg": "参数错误",
-		})
+		common.BadReqFail(c, "参数错误")
 	}
 	err := service.DeleteTodo(req.Id, req.Status, req.All, userId)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"msg": "删除todo失败",
-		})
+		common.InternalFail(c, "删除todo失败")
 		return
 	}
-	c.JSON(200, gin.H{
-		"msg": "删除成功",
-	})
-
+	common.Success(c, "删除成功")
 }
