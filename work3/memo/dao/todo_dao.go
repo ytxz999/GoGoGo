@@ -12,12 +12,17 @@ func CreateTodo(todo *model.Todo) error {
 }
 
 // 查询todo
-func GetTodoList(page int, size int, status *int, keyword string, user_id uint) ([]model.Todo, int64, error) {
+func GetTodoList(page *int, size int, status *int, keyword string, user_id uint) ([]model.Todo, int64, error) {
 	//统计数量
 	var total int64
 	//限制用户
 	query := database.DB.Model(&model.Todo{}).Where("user_id = ?", user_id)
-
+	var truePage int
+	if page == nil {
+		truePage = 1
+	} else {
+		truePage = *page
+	}
 	if status != nil {
 		query = query.Where("status = ?", *status)
 	}
@@ -27,7 +32,7 @@ func GetTodoList(page int, size int, status *int, keyword string, user_id uint) 
 	var todos []model.Todo
 	query.Count(&total)
 	//实现分页查询
-	err := query.Limit(size).Offset((page - 1) * size).Find(&todos).Error
+	err := query.Limit(size).Offset((truePage - 1) * size).Find(&todos).Error
 	return todos, total, err
 }
 

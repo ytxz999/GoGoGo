@@ -53,6 +53,7 @@ func CreateTodo(c *gin.Context) {
 }
 
 type QueryTodoRequest struct {
+	Page    *int   `json:"page"`
 	Status  *int   `json:"status"`
 	Keyword string `json:"keyword"`
 }
@@ -77,7 +78,10 @@ func GetTodoList(c *gin.Context) {
 		return
 	}
 	var req QueryTodoRequest
-	page := 1
+	if page := c.Query("page"); page != "" {
+		s, _ := strconv.Atoi(page)
+		req.Page = &s
+	}
 	size := 10
 	//查询status是否为空
 	if status := c.Query("status"); status != "" {
@@ -87,7 +91,7 @@ func GetTodoList(c *gin.Context) {
 	req.Keyword = c.DefaultQuery("keyword", "")
 
 	userId := value.(uint)
-	todoList, total, err := service.GetTodoList(page, size, req.Status, req.Keyword, userId)
+	todoList, total, err := service.GetTodoList(req.Page, size, req.Status, req.Keyword, userId)
 	if err != nil {
 		common.InternalFail(c, "获取todo失败")
 		return
@@ -95,7 +99,7 @@ func GetTodoList(c *gin.Context) {
 	common.Success(c, gin.H{
 		"data":   todoList,
 		"total":  total,
-		"page":   page,
+		"page":   req.Page,
 		"size":   size,
 		"msg":    "ok",
 		"status": 200,

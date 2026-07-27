@@ -54,7 +54,7 @@ func CreateTodo(title string, content string, startTime string, endTime string, 
 	return dao.CreateTodo(&todo)
 }
 
-func GetTodoList(page int, size int, status *int, keyword string, userId uint) ([]model.Todo, int64, error) {
+func GetTodoList(page *int, size int, status *int, keyword string, userId uint) ([]model.Todo, int64, error) {
 
 	return dao.GetTodoList(page, size, status, keyword, userId)
 }
