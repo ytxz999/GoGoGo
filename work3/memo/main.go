@@ -2,6 +2,7 @@ package main
 
 import (
 	"memo/database"
+	_ "memo/docs"
 	"memo/router"
 )
 

@@ -1,0 +1,257 @@
+definitions:
+  common.Response:
+    properties:
+      data: {}
+      msg:
+        type: string
+    type: object
+  controller.CreateTodoRequest:
+    properties:
+      content:
+        type: string
+      end_time:
+        type: string
+      start_time:
+        type: string
+      title:
+        type: string
+    type: object
+  controller.DeleteTodoRequest:
+    properties:
+      all:
+        description: 确认参数，保证全部删除为正确
+        type: boolean
+      id:
+        type: integer
+      status:
+        type: integer
+    type: object
+  controller.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  controller.QueryTodoRequest:
+    properties:
+      keyword:
+        type: string
+      status:
+        type: integer
+    type: object
+  controller.RegisterRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  controller.UpdateTodoRequest:
+    properties:
+      id:
+        type: integer
+      status:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: 用户输入用户名和密码获取JWT Token
+      parameters:
+      - description: 登录信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controller.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.Response'
+      summary: 登录User
+      tags:
+      - User
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: 用户输入用户名和密码实现注册
+      parameters:
+      - description: 注册信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controller.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.Response'
+      summary: 注册User
+      tags:
+      - User
+  /api/todos:
+    delete:
+      consumes:
+      - application/json
+      description: 用户输入id,status，all实现删除事项
+      parameters:
+      - description: todo信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controller.DeleteTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除todo
+      tags:
+      - Todo
+    get:
+      consumes:
+      - application/json
+      description: 用户输入status,key实现查询事项
+      parameters:
+      - description: todo信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controller.QueryTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询todo
+      tags:
+      - Todo
+    post:
+      consumes:
+      - application/json
+      description: 用户输入title,content,start_time,end_time实现创建事项
+      parameters:
+      - description: todo信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controller.CreateTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 创建todo
+      tags:
+      - Todo
+    put:
+      consumes:
+      - application/json
+      description: 用户输入id,status实现更新事项
+      parameters:
+      - description: todo信息
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controller.UpdateTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新todo
+      tags:
+      - Todo
+swagger: "2.0"

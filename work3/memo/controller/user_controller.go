@@ -14,7 +14,18 @@ type RegisterRequest struct {
 	Password string `json:"password"`
 }
 
-// 实现注册功能
+// Register 用户注册
+//
+// @Summary 注册User
+// @Description 用户输入用户名和密码实现注册
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param request body RegisterRequest true "注册信息"
+// @Success 200 {object} common.Response
+// @Failure 400 {object} common.Response
+// @Failure 500 {object} common.Response
+// @Router /api/register [post]
 func Register(c *gin.Context) {
 	// 解析请求参数
 	var req RegisterRequest
@@ -41,6 +52,18 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
+// Login 用户登录
+//
+// @Summary 登录User
+// @Description 用户输入用户名和密码获取JWT Token
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param request body LoginRequest true "登录信息"
+// @Success 200 {object} common.Response
+// @Failure 400 {object} common.Response
+// @Failure 500 {object} common.Response
+// @Router /api/login [post]
 // 实现登录功能
 func Login(c *gin.Context) {
 	var req LoginRequest

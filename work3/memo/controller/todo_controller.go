@@ -15,7 +15,20 @@ type CreateTodoRequest struct {
 	EndTime   string `json:"end_time"`
 }
 
-// 创建todo
+// CreateTodo 事项创建
+//
+// @Summary 创建todo
+// @Description 用户输入title,content,start_time,end_time实现创建事项
+// @Tags Todo
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Param request body CreateTodoRequest true "todo信息"
+// @Success 200 {object} common.Response
+// @Failure 400 {object} common.Response
+// @Failure 401 {object} common.Response
+// @Failure 500 {object} common.Response
+// @Router /api/todos [post]
 func CreateTodo(c *gin.Context) {
 	var req CreateTodoRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -40,13 +53,23 @@ func CreateTodo(c *gin.Context) {
 }
 
 type QueryTodoRequest struct {
-	Page    int    `json:"page"`
-	Size    int    `json:"size"`
 	Status  *int   `json:"status"`
 	Keyword string `json:"keyword"`
 }
 
-// 获取todo列表
+// GetTodoList 事项查询
+//
+// @Summary 查询todo
+// @Description 用户输入status,key实现查询事项
+// @Tags Todo
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Param request body QueryTodoRequest true "todo信息"
+// @Success 200 {object} common.Response
+// @Failure 401 {object} common.Response
+// @Failure 500 {object} common.Response
+// @Router /api/todos [get]
 func GetTodoList(c *gin.Context) {
 	value, exist := c.Get("userId")
 	if !exist {
@@ -54,8 +77,8 @@ func GetTodoList(c *gin.Context) {
 		return
 	}
 	var req QueryTodoRequest
-	req.Page, _ = strconv.Atoi(c.DefaultQuery("page", "1"))
-	req.Size, _ = strconv.Atoi(c.DefaultQuery("size", "10"))
+	page := 1
+	size := 10
 	//查询status是否为空
 	if status := c.Query("status"); status != "" {
 		s, _ := strconv.Atoi(status)
@@ -64,7 +87,7 @@ func GetTodoList(c *gin.Context) {
 	req.Keyword = c.DefaultQuery("keyword", "")
 
 	userId := value.(uint)
-	todoList, total, err := service.GetTodoList(req.Page, req.Size, req.Status, req.Keyword, userId)
+	todoList, total, err := service.GetTodoList(page, size, req.Status, req.Keyword, userId)
 	if err != nil {
 		common.InternalFail(c, "获取todo失败")
 		return
@@ -72,8 +95,8 @@ func GetTodoList(c *gin.Context) {
 	common.Success(c, gin.H{
 		"data":   todoList,
 		"total":  total,
-		"page":   req.Page,
-		"size":   req.Size,
+		"page":   page,
+		"size":   size,
 		"msg":    "ok",
 		"status": 200,
 	})
@@ -84,7 +107,20 @@ type UpdateTodoRequest struct {
 	Status int   `json:"status"`
 }
 
-// 更新todo
+// UpdateTodo 事项更新
+//
+// @Summary 更新todo
+// @Description 用户输入id,status实现更新事项
+// @Tags Todo
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Param request body UpdateTodoRequest  true "todo信息"
+// @Success 200 {object} common.Response
+// @Failure 400 {object} common.Response
+// @Failure 401 {object} common.Response
+// @Failure 500 {object} common.Response
+// @Router /api/todos [put]
 func UpdateTodo(c *gin.Context) {
 	value, exist := c.Get("userId")
 	if !exist {
@@ -111,7 +147,20 @@ type DeleteTodoRequest struct {
 	All bool `json:"all"`
 }
 
-// 删除todo
+// DeleteTodo 事项删除
+//
+// @Summary 删除todo
+// @Description 用户输入id,status，all实现删除事项
+// @Tags Todo
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Param request body DeleteTodoRequest  true "todo信息"
+// @Success 200 {object} common.Response
+// @Failure 400 {object} common.Response
+// @Failure 401 {object} common.Response
+// @Failure 500 {object} common.Response
+// @Router /api/todos [delete]
 func DeleteTodo(c *gin.Context) {
 	value, exist := c.Get("userId")
 	if !exist {
